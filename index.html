@@ -557,15 +557,15 @@
   /* ============ 16. AVISO DE COOKIES ============ */
   .cookie-banner{
     position:fixed;left:16px;bottom:16px;z-index:1200;
-    max-width:380px;width:calc(100vw - 32px);
+    max-width:360px;width:calc(100vw - 32px);
     background:var(--navy-dark);color:#DCE6F5;border:1px solid rgba(255,255,255,.12);
-    border-radius:14px;padding:18px 20px;box-shadow:0 20px 50px -15px rgba(0,0,0,.5);
-    display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px;
+    border-radius:12px;padding:12px 14px;box-shadow:0 20px 50px -15px rgba(0,0,0,.5);
+    display:flex;align-items:center;gap:12px;
   }
-  .cookie-banner p{margin:0;font-size:.85rem;color:#C6D6EC;flex:1 1 200px;}
-  .cookie-banner .btn{flex:none;width:100%;justify-content:center;padding:11px 20px;font-size:.86rem;}
+  .cookie-banner p{margin:0;font-size:.78rem;line-height:1.4;color:#C6D6EC;flex:1 1 auto;}
+  .cookie-banner .btn{flex:none;padding:9px 16px;font-size:.8rem;}
   @media (max-width:600px){
-    .cookie-banner{left:12px;bottom:96px;padding:16px;}
+    .cookie-banner{left:12px;bottom:12px;padding:10px 12px;}
   }
 
   /* ============ 14. WHATSAPP FLUTUANTE ============ */
@@ -1182,16 +1182,22 @@
   (function(){
     var STORAGE_KEY = "artsreis_cookies_aceitos";
     var banner = document.getElementById("cookieBanner");
-    var acceptBtn = document.getElementById("cookieAcceptBtn");
     var alreadyAccepted = false;
     try { alreadyAccepted = localStorage.getItem(STORAGE_KEY) === "1"; } catch(e){}
     if (!alreadyAccepted){
       banner.hidden = false;
     }
-    acceptBtn.addEventListener("click", function(){
+    function acceptCookies(){
       try { localStorage.setItem(STORAGE_KEY, "1"); } catch(e){}
       banner.hidden = true;
+    }
+    // delegação no document (não depende da referência direta ao botão)
+    document.addEventListener("click", function(e){
+      if (e.target.closest && e.target.closest("#cookieAcceptBtn")) acceptCookies();
     });
+    document.addEventListener("touchend", function(e){
+      if (e.target.closest && e.target.closest("#cookieAcceptBtn")) acceptCookies();
+    }, { passive: true });
   })();
 
   // --- Vídeo do portão: pausa e mantém só o poster para quem prefere menos movimento ---
