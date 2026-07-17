@@ -292,7 +292,7 @@
     position:relative;
   }
   .stats .container{
-    display:grid;grid-template-columns:repeat(4,1fr);
+    display:grid;grid-template-columns:repeat(5,1fr);
     padding:18px 24px;
   }
   .stat{text-align:center;padding:7px 10px;border-right:1px solid rgba(255,255,255,.08);}
@@ -546,6 +546,27 @@
   .map-wrap{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.12);}
   .map-wrap iframe{width:100%;height:260px;border:0;display:block;}
   .footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;font-size:.8rem;color:#7E93B3;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .footer-credit{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-top:24px;padding:10px 18px;border-radius:100px;
+    background:var(--bg-light);width:fit-content;margin-left:auto;margin-right:auto;
+  }
+  .footer-credit span{font-size:.76rem;color:var(--ink-soft);font-family:var(--font-mono);}
+  .footer-credit img{height:20px;width:auto;display:block;}
+
+  /* ============ 16. AVISO DE COOKIES ============ */
+  .cookie-banner{
+    position:fixed;left:16px;bottom:16px;z-index:1200;
+    max-width:380px;width:calc(100vw - 32px);
+    background:var(--navy-dark);color:#DCE6F5;border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;padding:18px 20px;box-shadow:0 20px 50px -15px rgba(0,0,0,.5);
+    display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px;
+  }
+  .cookie-banner p{margin:0;font-size:.85rem;color:#C6D6EC;flex:1 1 200px;}
+  .cookie-banner .btn{flex:none;width:100%;justify-content:center;padding:11px 20px;font-size:.86rem;}
+  @media (max-width:600px){
+    .cookie-banner{left:12px;bottom:96px;padding:16px;}
+  }
 
   /* ============ 14. WHATSAPP FLUTUANTE ============ */
   .whatsapp-float{
@@ -579,7 +600,7 @@
     .process-grid{grid-template-columns:repeat(2,1fr);row-gap:36px;}
     .process-step .step-line{display:none;}
     .stats .container{grid-template-columns:repeat(2,1fr);row-gap:24px;}
-    .stat:nth-child(2){border-right:none;}
+    .stat:nth-child(2),.stat:nth-child(4){border-right:none;}
   }
   @media (max-width:760px){
     section{padding:64px 0;}
@@ -665,20 +686,24 @@
 <section class="stats metal-texture">
   <div class="container">
     <div class="stat reveal-item">
-      <span class="stat-number" data-target="5" data-decimals="1">0.0</span>
-      <span class="stat-label">Avaliação no Google ★</span>
+      <span class="stat-number" data-target="500" data-suffix="+">0+</span>
+      <span class="stat-label">Portões instalados</span>
     </div>
     <div class="stat reveal-item">
-      <span class="stat-number" data-target="100" data-suffix="%">0%</span>
-      <span class="stat-label">Avaliações 5 estrelas</span>
+      <span class="stat-number" data-target="350" data-suffix="+">0+</span>
+      <span class="stat-label">Clientes atendidos</span>
     </div>
     <div class="stat reveal-item">
-      <span class="stat-number" data-target="3">0</span>
-      <span class="stat-label">Especialidades: portões, motores e serralheria</span>
+      <span class="stat-number" data-target="5" data-suffix="+">0+</span>
+      <span class="stat-label">Anos de mercado</span>
     </div>
     <div class="stat reveal-item">
-      <span class="stat-number" data-static="Rápido">Rápido</span>
-      <span class="stat-label">Atendimento direto no WhatsApp</span>
+      <span class="stat-number" data-target="10" data-suffix="+">0+</span>
+      <span class="stat-label">Cidades atendidas</span>
+    </div>
+    <div class="stat reveal-item">
+      <span class="stat-number" data-target="12">0</span>
+      <span class="stat-label">Meses de garantia</span>
     </div>
   </div>
 </section>
@@ -1126,6 +1151,10 @@
       <span>© <span id="year"></span> Art's Reis Portões e Serralheria - Manutenção de Motores. Todos os direitos reservados.</span>
       <span>Itaquaquecetuba - SP</span>
     </div>
+    <div class="footer-credit">
+      <span>Desenvolvido por</span>
+      <img src="imagens/logo-inovalogix-footer.png" alt="InovaLogix" height="20">
+    </div>
   </div>
 </footer>
 
@@ -1135,6 +1164,12 @@
   <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 15c0 2.4.66 4.63 1.8 6.55L4 29l7.66-1.75A11.9 11.9 0 0 0 16.02 27C22.6 27 28 21.64 28 15S22.6 3 16.02 3Zm0 21.8a9.72 9.72 0 0 1-4.96-1.36l-.36-.21-4.55 1.04 1.06-4.45-.24-.37A9.7 9.7 0 1 1 25.7 15a9.68 9.68 0 0 1-9.68 9.8Zm5.36-7.27c-.29-.15-1.73-.85-2-.95-.27-.1-.46-.15-.66.15-.2.29-.76.95-.93 1.14-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.47-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.6-.9-2.19-.24-.58-.48-.5-.66-.51h-.56c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43s1.05 2.82 1.2 3.02c.15.2 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.34.19 1.84.12.56-.08 1.73-.71 1.98-1.39.24-.68.24-1.27.17-1.39-.07-.12-.26-.2-.55-.34Z"/></svg>
 </a>
 
+<!-- ===================== AVISO DE COOKIES ===================== -->
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
+  <p>Usamos cookies para melhorar sua experiência de navegação. Ao continuar navegando, você concorda com isso.</p>
+  <button type="button" class="btn btn-gold" id="cookieAcceptBtn">Aceitar</button>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -1142,6 +1177,22 @@
 
   // --- Ano no rodapé ---
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  // --- Aviso de cookies ---
+  (function(){
+    var STORAGE_KEY = "artsreis_cookies_aceitos";
+    var banner = document.getElementById("cookieBanner");
+    var acceptBtn = document.getElementById("cookieAcceptBtn");
+    var alreadyAccepted = false;
+    try { alreadyAccepted = localStorage.getItem(STORAGE_KEY) === "1"; } catch(e){}
+    if (!alreadyAccepted){
+      banner.hidden = false;
+    }
+    acceptBtn.addEventListener("click", function(){
+      try { localStorage.setItem(STORAGE_KEY, "1"); } catch(e){}
+      banner.hidden = true;
+    });
+  })();
 
   // --- Vídeo do portão: pausa e mantém só o poster para quem prefere menos movimento ---
   var gateVideo = document.querySelector(".hero-gate-demo video");
