@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-label="GRANDE Portões">
+  <title>GRANDE Portões</title>
+  <g fill="none" stroke="#1568C4" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M150,150 L170,75 L205,115 L240,50 L260,80 L280,50 L315,115 L350,75 L370,150" />
+    <path d="M170,158 Q260,176 350,158" stroke-width="7" />
+  </g>
+  <text x="260" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="78" letter-spacing="1" fill="#1568C4">GRANDE</text>
+  <rect x="108" y="246" width="304" height="56" rx="4" fill="#1568C4" />
+  <text x="260" y="284" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="32" letter-spacing="4" fill="#FFFFFF">PORTÕES</text>
+</svg>
