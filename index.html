@@ -1028,7 +1028,7 @@
 
       <div class="quote-result-actions">
         <button type="button" class="btn btn-outline-dark" id="quoteEditBtn">Editar dados</button>
-        <a class="btn btn-gold" id="quoteWhatsappBtn" href="#" target="_blank" rel="noopener">Enviar via WhatsApp</a>
+        <button type="button" class="btn btn-gold" id="quoteWhatsappBtn">Enviar via WhatsApp</button>
       </div>
 
       <div class="visit-scheduler">
@@ -1460,7 +1460,17 @@
   var qTelefone = document.getElementById("qTelefone");
   var quoteLastFocused = null;
   var currentModelName = "";
+  var currentAreaM2 = 0;
+  var currentValorPortao = 0;
+  var currentValorMotor = 0;
   var currentTotalOrcamento = 0;
+  var currentEspessuraLabel = "";
+  var currentVelocidadeLabel = "";
+  var currentEntrada = 0;
+  var currentRestante = 0;
+  var currentParcelasN = 1;
+  var currentValorParcela = 0;
+  var currentTotalParcelado = 0;
 
   var PRECO_POR_M2 = { "1.2": 400, "2": 500, "3": 550 };
   var PRECO_MOTOR = { "1": 600, "1.5": 800, "2": 1200 };
@@ -1505,6 +1515,12 @@
     var n = parseInt(pParcelas.value, 10) || 1;
     var parcela = calcularValorParcela(restante, n);
     var totalParcelado = parcela * n;
+
+    currentEntrada = entrada;
+    currentRestante = restante;
+    currentParcelasN = n;
+    currentValorParcela = parcela;
+    currentTotalParcelado = totalParcelado;
 
     pEntradaValor.textContent = formatBRL(entrada);
     pRestante.textContent = formatBRL(restante);
@@ -1579,31 +1595,53 @@
     document.getElementById("qrMotor").textContent = formatBRL(valorMotor);
     document.getElementById("qrTotal").textContent = formatBRL(total);
 
-    var espessuraLabel = qEspessura.options[qEspessura.selectedIndex].text;
-    var velocidadeLabel = qVelocidade.options[qVelocidade.selectedIndex].text;
-    var mensagem = "Olá! Simulei um orçamento de portão automático pelo site.\n\n"
-      + (currentModelName ? "Modelo de referência: " + currentModelName + "\n\n" : "")
-      + "Medidas: " + altura + "cm (altura) x " + largura + "cm (largura)\n"
-      + "Espessura do material: " + espessuraLabel + "\n"
-      + "Velocidade de abertura: " + velocidadeLabel + "\n\n"
-      + "Nome: " + qNome.value + "\n"
-      + "Telefone: " + qTelefone.value + "\n"
-      + "Endereço: " + qEndereco.value + "\n\n"
-      + "Área do portão: " + areaM2.toFixed(2).replace(".", ",") + " m²\n"
-      + "Valor do portão: " + formatBRL(valorPortao) + "\n"
-      + "Valor do motor: " + formatBRL(valorMotor) + "\n"
-      + "Total estimado: " + formatBRL(total) + "\n\n"
-      + "⚠️ " + AVISO_COTACAO;
-
-    quoteWhatsappBtn.href = "https://wa.me/5511960764543?text=" + encodeURIComponent(mensagem);
+    currentAreaM2 = areaM2;
+    currentValorPortao = valorPortao;
+    currentValorMotor = valorMotor;
+    currentTotalOrcamento = total;
+    currentEspessuraLabel = qEspessura.options[qEspessura.selectedIndex].text;
+    currentVelocidadeLabel = qVelocidade.options[qVelocidade.selectedIndex].text;
 
     quoteForm.hidden = true;
     quoteResult.hidden = false;
 
-    currentTotalOrcamento = total;
     pEntrada.value = "";
     pParcelas.value = "1";
     atualizarSimuladorPagamento();
+  });
+
+  // --- Texto com a forma de pagamento, reaproveitado nas mensagens do WhatsApp ---
+  function textoFinanceiro(){
+    if (currentRestante <= 0 && currentEntrada > 0){
+      return "Forma de pagamento: entrada de " + formatBRL(currentEntrada) + " cobre o valor total, sem saldo a parcelar.";
+    }
+    var linhas = ["Forma de pagamento:"];
+    if (currentEntrada > 0) linhas.push("Entrada: " + formatBRL(currentEntrada));
+    linhas.push(
+      "Parcelamento: " + currentParcelasN + "x de " + formatBRL(currentValorParcela) +
+      (currentParcelasN <= MAX_PARCELAS_SEM_JUROS ? " (sem juros)" : " (com juros de 1,5% a.m.)")
+    );
+    linhas.push("Total parcelado: " + formatBRL(currentTotalParcelado));
+    return linhas.join("\n");
+  }
+
+  quoteWhatsappBtn.addEventListener("click", function(){
+    var mensagem = "Olá! Simulei um orçamento de portão automático pelo site.\n\n"
+      + (currentModelName ? "Modelo de referência: " + currentModelName + "\n\n" : "")
+      + "Medidas: " + qAltura.value + "cm (altura) x " + qLargura.value + "cm (largura)\n"
+      + "Espessura do material: " + currentEspessuraLabel + "\n"
+      + "Velocidade de abertura: " + currentVelocidadeLabel + "\n\n"
+      + "Nome: " + qNome.value + "\n"
+      + "Telefone: " + qTelefone.value + "\n"
+      + "Endereço: " + qEndereco.value + "\n\n"
+      + "Área do portão: " + currentAreaM2.toFixed(2).replace(".", ",") + " m²\n"
+      + "Valor do portão: " + formatBRL(currentValorPortao) + "\n"
+      + "Valor do motor: " + formatBRL(currentValorMotor) + "\n"
+      + "Total estimado: " + formatBRL(currentTotalOrcamento) + "\n\n"
+      + textoFinanceiro() + "\n\n"
+      + "⚠️ " + AVISO_COTACAO;
+
+    window.open("https://wa.me/5511960764543?text=" + encodeURIComponent(mensagem), "_blank", "noopener");
   });
 
   // --- Agendamento de visita técnica (apenas horários comerciais) ---
@@ -1666,6 +1704,7 @@
       + "Telefone: " + qTelefone.value + "\n"
       + "Endereço: " + qEndereco.value + "\n"
       + "Total estimado: " + formatBRL(currentTotalOrcamento) + "\n\n"
+      + textoFinanceiro() + "\n\n"
       + "Data desejada para a visita: " + nomeDia + ", " + dataFormatada + " às " + qVisitaHorario.value;
 
     window.open("https://wa.me/5511960764543?text=" + encodeURIComponent(mensagemAgendamento), "_blank", "noopener");
