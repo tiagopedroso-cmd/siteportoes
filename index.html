@@ -463,7 +463,9 @@
     font-size:.82rem;padding:12px 14px;margin:18px 0;line-height:1.5;
   }
   .quote-result-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
-  .quote-result-actions .btn{flex:1;justify-content:center;}
+  .quote-result-actions .btn{flex:1 1 160px;justify-content:center;}
+  .btn-schedule{background:#2E86E8;color:#fff;box-shadow:0 10px 22px -10px rgba(46,134,232,.55);}
+  .btn-schedule svg{width:18px;height:18px;}
   .btn-outline-dark{
     background:transparent;border:2px solid var(--line);color:var(--navy-dark);box-shadow:none;
   }
@@ -1017,6 +1019,10 @@
       <div class="quote-result-actions">
         <button type="button" class="btn btn-outline-dark" id="quoteEditBtn">Editar dados</button>
         <a class="btn btn-gold" id="quoteWhatsappBtn" href="#" target="_blank" rel="noopener">Enviar via WhatsApp</a>
+        <a class="btn btn-schedule" id="quoteScheduleBtn" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m9 15 2 2 4-4"/></svg>
+          Agendar visita técnica
+        </a>
       </div>
     </div>
   </div>
@@ -1415,6 +1421,7 @@
   var quoteResult = document.getElementById("quoteResult");
   var quoteEditBtn = document.getElementById("quoteEditBtn");
   var quoteWhatsappBtn = document.getElementById("quoteWhatsappBtn");
+  var quoteScheduleBtn = document.getElementById("quoteScheduleBtn");
   var qAltura = document.getElementById("qAltura");
   var qLargura = document.getElementById("qLargura");
   var qEspessura = document.getElementById("qEspessura");
@@ -1556,6 +1563,17 @@
       + "⚠️ " + AVISO_COTACAO;
 
     quoteWhatsappBtn.href = "https://wa.me/5511960764543?text=" + encodeURIComponent(mensagem);
+
+    var mensagemAgendamento = "Olá! Já simulei o orçamento do meu portão automático pelo site e aprovei a cotação. Quero agendar uma visita técnica para avaliação presencial antes de iniciarmos o trabalho.\n\n"
+      + (currentModelName ? "Modelo de referência: " + currentModelName + "\n\n" : "")
+      + "Medidas: " + altura + "cm (altura) x " + largura + "cm (largura)\n"
+      + "Nome: " + qNome.value + "\n"
+      + "Telefone: " + qTelefone.value + "\n"
+      + "Endereço: " + qEndereco.value + "\n"
+      + "Total estimado: " + formatBRL(total) + "\n\n"
+      + "Qual o melhor dia e horário para a visita?";
+    quoteScheduleBtn.href = "https://wa.me/5511960764543?text=" + encodeURIComponent(mensagemAgendamento);
+
     quoteForm.hidden = true;
     quoteResult.hidden = false;
 
