@@ -435,15 +435,15 @@
   .quote-modal-close svg{width:18px;height:18px;}
   .quote-modal-card h3{font-size:1.4rem;margin-bottom:.2em;}
   .quote-modal-model{font-family:var(--font-mono);font-size:.8rem;color:var(--blue);margin-bottom:20px;}
-  .quote-form label{
+  .quote-form label,.quote-modal-card .payment-sim label,.quote-modal-card .visit-scheduler label{
     display:flex;flex-direction:column;gap:6px;font-family:var(--font-body);font-weight:600;
     font-size:.86rem;color:var(--navy-dark);margin-bottom:16px;
   }
-  .quote-form input,.quote-form select{
-    font-family:var(--font-body);font-size:.95rem;font-weight:400;color:var(--ink);
+  .quote-form input,.quote-form select,.quote-modal-card .payment-sim input,.quote-modal-card .payment-sim select,.quote-modal-card .visit-scheduler input,.quote-modal-card .visit-scheduler select{
+    width:100%;font-family:var(--font-body);font-size:.95rem;font-weight:400;color:var(--ink);
     border:1.5px solid var(--line);border-radius:8px;padding:11px 12px;background:#fff;
   }
-  .quote-form input:focus,.quote-form select:focus{border-color:var(--blue);}
+  .quote-form input:focus,.quote-form select:focus,.quote-modal-card .payment-sim input:focus,.quote-modal-card .payment-sim select:focus,.quote-modal-card .visit-scheduler input:focus,.quote-modal-card .visit-scheduler select:focus{border-color:var(--blue);}
   .quote-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
   .quote-form-hint{font-size:.78rem;color:var(--ink-soft);font-weight:400;margin-top:-4px;}
   .quote-form button[type="submit"]{width:100%;justify-content:center;margin-top:6px;}
@@ -464,8 +464,18 @@
   }
   .quote-result-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
   .quote-result-actions .btn{flex:1 1 160px;justify-content:center;}
-  .btn-schedule{background:#2E86E8;color:#fff;box-shadow:0 10px 22px -10px rgba(46,134,232,.55);}
+  .btn-schedule{background:#2E86E8;color:#fff;box-shadow:0 10px 22px -10px rgba(46,134,232,.55);width:100%;}
   .btn-schedule svg{width:18px;height:18px;}
+  .btn-schedule:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none;}
+
+  .visit-scheduler{border-top:2px solid var(--navy-dark);margin-top:24px;padding-top:18px;}
+  .visit-scheduler h4{
+    font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;
+    font-size:1.05rem;color:var(--navy-dark);margin-bottom:6px;
+  }
+  .visit-scheduler-hint{font-size:.82rem;color:var(--ink-soft);margin:0 0 14px;line-height:1.5;}
+  .visit-error{color:#B3261E;font-size:.82rem;font-weight:600;margin:-6px 0 14px;display:none;}
+  .visit-error.visible{display:block;}
   .btn-outline-dark{
     background:transparent;border:2px solid var(--line);color:var(--navy-dark);box-shadow:none;
   }
@@ -1019,10 +1029,26 @@
       <div class="quote-result-actions">
         <button type="button" class="btn btn-outline-dark" id="quoteEditBtn">Editar dados</button>
         <a class="btn btn-gold" id="quoteWhatsappBtn" href="#" target="_blank" rel="noopener">Enviar via WhatsApp</a>
-        <a class="btn btn-schedule" id="quoteScheduleBtn" href="#" target="_blank" rel="noopener">
+      </div>
+
+      <div class="visit-scheduler">
+        <h4>Agendar visita técnica</h4>
+        <p class="visit-scheduler-hint">Escolha o melhor dia e horário para a avaliação presencial. Atendemos de segunda a sexta, das 8h às 18h, e sábado, das 8h às 12h.</p>
+        <div class="quote-form-grid">
+          <label>Data da visita
+            <input type="date" id="qVisitaData">
+          </label>
+          <label>Horário
+            <select id="qVisitaHorario" disabled>
+              <option value="">Escolha a data primeiro</option>
+            </select>
+          </label>
+        </div>
+        <p class="visit-error" id="visitaError">Escolha uma data dentro do horário comercial (não atendemos aos domingos) e um horário disponível.</p>
+        <button type="button" class="btn btn-schedule" id="quoteScheduleBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m9 15 2 2 4-4"/></svg>
-          Agendar visita técnica
-        </a>
+          Confirmar agendamento via WhatsApp
+        </button>
       </div>
     </div>
   </div>
@@ -1422,6 +1448,9 @@
   var quoteEditBtn = document.getElementById("quoteEditBtn");
   var quoteWhatsappBtn = document.getElementById("quoteWhatsappBtn");
   var quoteScheduleBtn = document.getElementById("quoteScheduleBtn");
+  var qVisitaData = document.getElementById("qVisitaData");
+  var qVisitaHorario = document.getElementById("qVisitaHorario");
+  var visitaError = document.getElementById("visitaError");
   var qAltura = document.getElementById("qAltura");
   var qLargura = document.getElementById("qLargura");
   var qEspessura = document.getElementById("qEspessura");
@@ -1503,6 +1532,10 @@
     quoteError.classList.remove("visible");
     pEntrada.value = "";
     pParcelas.value = "1";
+    qVisitaData.value = "";
+    qVisitaHorario.innerHTML = '<option value="">Escolha a data primeiro</option>';
+    qVisitaHorario.disabled = true;
+    visitaError.classList.remove("visible");
     quoteLastFocused = document.activeElement;
     quoteModal.classList.add("active");
     quoteModal.setAttribute("aria-hidden", "false");
@@ -1564,16 +1597,6 @@
 
     quoteWhatsappBtn.href = "https://wa.me/5511960764543?text=" + encodeURIComponent(mensagem);
 
-    var mensagemAgendamento = "Olá! Já simulei o orçamento do meu portão automático pelo site e aprovei a cotação. Quero agendar uma visita técnica para avaliação presencial antes de iniciarmos o trabalho.\n\n"
-      + (currentModelName ? "Modelo de referência: " + currentModelName + "\n\n" : "")
-      + "Medidas: " + altura + "cm (altura) x " + largura + "cm (largura)\n"
-      + "Nome: " + qNome.value + "\n"
-      + "Telefone: " + qTelefone.value + "\n"
-      + "Endereço: " + qEndereco.value + "\n"
-      + "Total estimado: " + formatBRL(total) + "\n\n"
-      + "Qual o melhor dia e horário para a visita?";
-    quoteScheduleBtn.href = "https://wa.me/5511960764543?text=" + encodeURIComponent(mensagemAgendamento);
-
     quoteForm.hidden = true;
     quoteResult.hidden = false;
 
@@ -1581,6 +1604,71 @@
     pEntrada.value = "";
     pParcelas.value = "1";
     atualizarSimuladorPagamento();
+  });
+
+  // --- Agendamento de visita técnica (apenas horários comerciais) ---
+  var DIAS_SEMANA = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+
+  function pad2(n){ return (n < 10 ? "0" : "") + n; }
+  function formatarDataISO(d){ return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  function parseDataISO(valor){
+    var partes = valor.split("-");
+    return new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
+  }
+  function horariosComerciais(diaSemana){
+    if (diaSemana === 0) return []; // domingo: fechado
+    var fim = (diaSemana === 6) ? 12 : 18; // sábado até 12h, seg-sex até 18h
+    var horarios = [];
+    for (var h = 8; h < fim; h++) horarios.push(pad2(h) + ":00");
+    return horarios;
+  }
+
+  var amanha = new Date();
+  amanha.setDate(amanha.getDate() + 1);
+  qVisitaData.min = formatarDataISO(amanha);
+
+  qVisitaData.addEventListener("change", function(){
+    visitaError.classList.remove("visible");
+    if (!qVisitaData.value){
+      qVisitaHorario.disabled = true;
+      qVisitaHorario.innerHTML = '<option value="">Escolha a data primeiro</option>';
+      return;
+    }
+    var diaSemana = parseDataISO(qVisitaData.value).getDay();
+    var horarios = horariosComerciais(diaSemana);
+    if (horarios.length === 0){
+      qVisitaHorario.disabled = true;
+      qVisitaHorario.innerHTML = '<option value="">Fechado aos domingos</option>';
+      visitaError.textContent = "Não atendemos aos domingos. Escolha outro dia.";
+      visitaError.classList.add("visible");
+      return;
+    }
+    qVisitaHorario.disabled = false;
+    qVisitaHorario.innerHTML = '<option value="">Selecione um horário</option>' +
+      horarios.map(function(h){ return '<option value="' + h + '">' + h + '</option>'; }).join("");
+  });
+
+  quoteScheduleBtn.addEventListener("click", function(){
+    if (!qVisitaData.value || !qVisitaHorario.value){
+      visitaError.textContent = "Escolha uma data e um horário para a visita.";
+      visitaError.classList.add("visible");
+      return;
+    }
+    visitaError.classList.remove("visible");
+    var data = parseDataISO(qVisitaData.value);
+    var dataFormatada = pad2(data.getDate()) + "/" + pad2(data.getMonth() + 1) + "/" + data.getFullYear();
+    var nomeDia = DIAS_SEMANA[data.getDay()];
+
+    var mensagemAgendamento = "Olá! Já simulei o orçamento do meu portão automático pelo site e aprovei a cotação. Quero agendar uma visita técnica para avaliação presencial antes de iniciarmos o trabalho.\n\n"
+      + (currentModelName ? "Modelo de referência: " + currentModelName + "\n\n" : "")
+      + "Medidas: " + qAltura.value + "cm (altura) x " + qLargura.value + "cm (largura)\n"
+      + "Nome: " + qNome.value + "\n"
+      + "Telefone: " + qTelefone.value + "\n"
+      + "Endereço: " + qEndereco.value + "\n"
+      + "Total estimado: " + formatBRL(currentTotalOrcamento) + "\n\n"
+      + "Data desejada para a visita: " + nomeDia + ", " + dataFormatada + " às " + qVisitaHorario.value;
+
+    window.open("https://wa.me/5511960764543?text=" + encodeURIComponent(mensagemAgendamento), "_blank", "noopener");
   });
 
   quoteEditBtn.addEventListener("click", function(){
